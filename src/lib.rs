@@ -18,6 +18,7 @@ pub struct FactChunk {
 pub struct WavFile {
   pub fact: FactChunk,
   pub format: FormatChunk,
+  beginning: u64,
 }
 
 impl WavFile {
@@ -89,7 +90,12 @@ impl WavFile {
       match formatO {
         Some(format) => {
           match factO {
-            Some(fact) => Ok(WavFile { format: format, fact: fact } ),
+            Some(fact) => { 
+              println!("4 bytes: {}", try!(f.read_le_u32()));
+              let beginning = try!(f.tell());
+              println!("start of data chunk is at offset {}", beginning);
+              Ok(WavFile { format: format, fact: fact, beginning: beginning } )
+            },
               None => panic!("no fact"),
           }
         },
