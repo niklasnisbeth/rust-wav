@@ -1,0 +1,5 @@
+[package]
+
+name = "wav"
+version = "0.0.1"
+authors = ["Niklas Nisbeth <nni@cirque.dk>"]
