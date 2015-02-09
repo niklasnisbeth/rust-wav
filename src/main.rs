@@ -18,7 +18,10 @@ fn main() {
           wf.format.bitsPerSample,
           wf.format.samplesPerSec
         );
-        println!("{} samples long", wf.fact.noSamples);
+	match wf.fact {
+          Some(fact) => { println!("{} samples long", fact.noSamples); },
+	  None => { println!("no fact chunk"); },
+	}
       },
       Err(e)=> println!("{}",e)
     } 

@@ -1,6 +1,6 @@
 use std::string::{String};
 use std::vec::{Vec};
-use std::io::{File, IoResult};
+use std::old_io::{File, IoResult};
 
 pub struct FormatChunk {
   pub tag: u16,
@@ -16,7 +16,7 @@ pub struct FactChunk {
 }
 
 pub struct WavFile {
-  pub fact: FactChunk,
+  pub fact: Option<FactChunk>,
   pub format: FormatChunk,
   beginning: u64,
 }
@@ -83,23 +83,18 @@ impl WavFile {
           match chunk_name.as_slice() {
             "fmt " => { formatO = Some(try!(read_format_chunk(f))) },
             "fact" => { factO = Some(try!(read_fact_chunk(f))) },
-              _ => { try!(diregard_chunk(f)) },
+              _ => { println!("what's a {} chunk?!", chunk_name); try!(diregard_chunk(f)) },
           }
       }
 
       match formatO {
-        Some(format) => {
-          match factO {
-            Some(fact) => { 
-              println!("4 bytes: {}", try!(f.read_le_u32()));
-              let beginning = try!(f.tell());
-              println!("start of data chunk is at offset {}", beginning);
-              Ok(WavFile { format: format, fact: fact, beginning: beginning } )
-            },
-              None => panic!("no fact"),
-          }
-        },
-        None => panic!("no format"),
+	Some(format) => {
+	  println!("4 bytes: {}", try!(f.read_le_u32()));
+	  let beginning = try!(f.tell());
+	  println!("start of data chunk is at offset {}", beginning);
+	  Ok(WavFile { format: format, fact: factO, beginning: beginning } )
+	}
+	None => panic!("no format"),
       }
     }
 
