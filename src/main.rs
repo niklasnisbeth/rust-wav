@@ -1,6 +1,6 @@
 extern crate wav;
 
-use wav::WavFile;
+use wav::WavFileHeader;
 
 fn main() {
   let args = std::os::args(); 
@@ -10,20 +10,21 @@ fn main() {
   }
   else {
     let p = Path::new(&args[1]); 
-    match WavFile::read(p) {
+    match WavFileHeader::read(p) {
       Ok(wf) => { 
         println!("opened");
         println!("{} channels of {} bits at {} samples per second",
-          wf.format.channels,
-          wf.format.bitsPerSample,
-          wf.format.samplesPerSec
-        );
-	match wf.fact {
+            wf.format.channels,
+            wf.format.bitsPerSample,
+            wf.format.samplesPerSec
+            );
+        println!("{} bytes, ie. {} samples", wf.length, ((wf.length)/((wf.format.bitsPerSample/8) as u32))/wf.format.channels as u32);
+        match wf.fact {
           Some(fact) => { println!("{} samples long", fact.noSamples); },
-	  None => { println!("no fact chunk"); },
-	}
+            None => { println!("no fact chunk"); },
+        }
       },
-      Err(e)=> println!("{}",e)
+        Err(e)=> println!("{}",e)
     } 
   }
 }
