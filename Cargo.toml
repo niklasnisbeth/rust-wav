@@ -1,5 +1,5 @@
 [package]
 
-name = "wav"
+name = "rust-wav"
 version = "0.0.1"
-authors = ["Niklas Nisbeth <nni@cirque.dk>"]
+authors = ["Niklas Nisbeth <niklas@nisbeth.dk>"]

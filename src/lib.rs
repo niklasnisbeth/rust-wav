@@ -21,7 +21,7 @@ pub struct WavFile {
   beginning: u64,
 }
 
-impl WavFile {
+impl WavFile { 
   pub fn read(p: Path) -> IoResult<WavFile> {
     fn read_chunk_name(f: &mut File) -> IoResult<String> {
       let mut name = [0u8; 4];
@@ -76,33 +76,33 @@ impl WavFile {
       let mut formatO = None::<FormatChunk>;
       let mut factO = None::<FactChunk>;
 
-      let mut chunk_name = String::new();
+      let mut chunk_name;
       while { 
         chunk_name = try!(read_chunk_name(f)); 
         chunk_name != "data" } { 
           match chunk_name.as_slice() {
             "fmt " => { formatO = Some(try!(read_format_chunk(f))) },
-            "fact" => { factO = Some(try!(read_fact_chunk(f))) },
+              "fact" => { factO = Some(try!(read_fact_chunk(f))) },
               _ => { println!("what's a {} chunk?!", chunk_name); try!(diregard_chunk(f)) },
           }
-      }
+        }
 
       match formatO {
-	Some(format) => {
-	  println!("4 bytes: {}", try!(f.read_le_u32()));
-	  let beginning = try!(f.tell());
-	  println!("start of data chunk is at offset {}", beginning);
-	  Ok(WavFile { format: format, fact: factO, beginning: beginning } )
-	}
-	None => panic!("no format"),
+        Some(format) => {
+          println!("4 bytes: {}", try!(f.read_le_u32()));
+          let beginning = try!(f.tell());
+          println!("start of data chunk is at offset {}", beginning);
+          Ok(WavFile { format: format, fact: factO, beginning: beginning } )
+        }
+        None => panic!("no format"),
       }
     }
 
     let mut f = try!(File::open(&p));
     let head = try!(read_chunk_name(&mut f));
     if head == "RIFF" { 
-      println!("4 bytes: {}", try!(f.read_le_u32()));
-      println!("4 bytes: {}", try!(f.read_le_u32()));
+      println!("4 bytes: {}", try!(f.read_le_u32())); // skip filesize
+      println!("4 bytes: {}", try!(f.read_le_u32())); // skip 'WAVE'
       read_wav_chunk(&mut f)
     } else {
       panic!("bad head")
